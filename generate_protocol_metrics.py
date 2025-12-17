@@ -552,7 +552,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             <div class="footer-content">
                 <div class="footer-top">
                     <div class="footer-left">
-                        The Graph Protocol Metrics Dashboard
+                        Generated on: {timestamp}
                     </div>
                     <div class="footer-right">
                         <span class="version">v{VERSION}</span>

@@ -183,9 +183,16 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
         data: List of NetworkIndexerData objects
         output_path: Path to save the HTML file
     """
+    # Calculate total across all networks
+    total_all_networks = sum(entry.subgraph_count for entry in data)
+    
     # Sort by subgraph count and get top 20
     sorted_data = sorted(data, key=lambda x: x.subgraph_count, reverse=True)[:20]
-    total = sum(entry.subgraph_count for entry in sorted_data)
+    total_top_20 = sum(entry.subgraph_count for entry in sorted_data)
+    
+    # Calculate percentage
+    percentage = (total_top_20 / total_all_networks * 100) if total_all_networks > 0 else 0
+    
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     
     html_content = f"""<!DOCTYPE html>
@@ -314,26 +321,47 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             padding: 30px;
         }}
         
-        .stats-summary {{
+        .stats-container {{
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }}
+        
+        .stats-card {{
             background: rgba(12, 10, 29, 0.6);
             border: 1px solid #9CA3AF;
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 30px;
             text-align: center;
+            flex: 0 0 250px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }}
         
-        .stats-summary h2 {{
-            font-size: 1.5em;
-            margin-bottom: 10px;
+        .stats-card h2 {{
+            font-size: 1.1em;
+            margin-bottom: 15px;
             color: #F8F6FF;
             font-weight: 400;
+            line-height: 1.3;
         }}
         
-        .stats-summary .total {{
-            font-size: 2em;
+        .stats-card .total {{
+            font-size: 2.5em;
             color: #4CAF50;
             font-weight: 600;
+            margin: 10px 0;
+        }}
+        
+        .stats-card .percentage {{
+            font-size: 0.9em;
+            color: #9CA3AF;
+            margin-top: 5px;
         }}
         
         table {{
@@ -454,6 +482,16 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
                 font-size: 1.5em;
             }}
             
+            .stats-container {{
+                flex-direction: column;
+                align-items: center;
+            }}
+            
+            .stats-card {{
+                width: 100%;
+                max-width: 300px;
+            }}
+            
             .footer-top {{
                 flex-direction: column;
                 align-items: flex-start;
@@ -489,16 +527,22 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
     <div class="container">
         <div class="header">
             <h1>The Graph Protocol Metrics</h1>
-            <div class="subtitle">Top 20 Networks by Subgraph Count</div>
             <div class="subtitle" style="margin-top: 10px; font-size: 0.85em;">
                 Generated on: {timestamp} | Version: v{VERSION}
             </div>
         </div>
         
         <div class="content">
-            <div class="stats-summary">
-                <h2>Total Subgraphs (Top 20)</h2>
-                <div class="total">{total:,}</div>
+            <div class="stats-container">
+                <div class="stats-card">
+                    <h2>Total Subgraphs<br/>(Top 20 Chains)</h2>
+                    <div class="total">{total_top_20:,}</div>
+                    <div class="percentage">{percentage:.1f}% of total</div>
+                </div>
+                <div class="stats-card">
+                    <h2>Total Subgraphs<br/>(All Networks)</h2>
+                    <div class="total">{total_all_networks:,}</div>
+                </div>
             </div>
             
             <table>

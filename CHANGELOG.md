@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Network comparison table**: Expandable table comparing Arbitrum vs Ethereum networks
+  - Triggered by arrow button on "GRT Given to Delegators" card
+  - Shows side-by-side comparison of both networks
+  - Columns: Arbitrum, Ethereum
+  - Rows: Total Rewards, Indexer Rewards, Delegator Rewards, Total Delegators, Active Delegators
+  - Active delegators marked with + to indicate first 1,000 count
+  - Purple-themed headers matching arrow button styling
+  - Table hidden by default, toggles on/off with arrow click
+- `fetch_network_comparison_stats()` function to query both network subgraphs
+  - Queries Arbitrum Network (DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp)
+  - Queries Ethereum Network (9Co7EQe5PgW3ugCUJrJgRv4u9zdEuDJf8NvMWftNsBH8)
+  - Fetches graphNetwork data and active delegators count for each
+  - Returns dictionary with 'arbitrum' and 'ethereum' keys
 - **Rewards distribution cards** (second row): Three new cards showing network-wide rewards metrics
   - Total Rewards Distributed - all indexing rewards on Arbitrum Network
   - GRT Kept by Indexers (red #FF6B6B) - indexer portion of rewards
@@ -93,6 +106,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensured green numbers align at exactly the same vertical position
 
 ### Technical
+- **Network comparison table implementation**:
+  - Added `toggleNetworkComparison()` JavaScript function to control table visibility
+  - Added `#networkComparisonTable` CSS with purple-themed styling
+  - Network headers: `rgba(111, 76, 255, 0.2/0.3)` background
+  - Row labels left-aligned with gray color (#9CA3AF)
+  - Responsive table layout with proper column widths (40%, 30%, 30%)
+  - Wei to GRT conversion for all reward values
+  - Pagination for active delegators (first 1000 for performance)
 - **Arrow button CSS enhancements**:
   - Added background and border styling with green theme
   - Scale transform (1.1x) on hover for interactive feedback

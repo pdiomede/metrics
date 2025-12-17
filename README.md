@@ -86,6 +86,18 @@ Accessible by clicking the arrow on the Net card:
 - **Card 1**: Total Rewards Distributed - Complete sum of all indexing rewards on Arbitrum
 - **Card 2**: GRT Kept by Indexers - Portion of rewards retained by indexers (red)
 - **Card 3**: GRT Given to Delegators - Portion of rewards distributed to delegators (cyan)
+  - Interactive arrow button (›/∨) to expand/collapse network comparison table
+
+### Network Comparison Table (Collapsible)
+Accessible by clicking the arrow on the "GRT Given to Delegators" card:
+- **Columns**: Arbitrum Network vs Ethereum Network side-by-side comparison
+- **Rows**:
+  - Total Rewards (in GRT)
+  - Indexer Rewards (in GRT)
+  - Delegator Rewards (in GRT)
+  - Total Delegators (historical count)
+  - Active Delegators (with GRT) - shows 1,000+ as approximation
+- **Default**: Hidden (click arrow to reveal)
 
 ### Subgraph Metrics (Second Row)
 - **Card 1**: Total Subgraphs (All Networks) - Shows complete count across all 150+ networks

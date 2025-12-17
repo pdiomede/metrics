@@ -508,7 +508,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
             border-radius: 6px;
             position: absolute;
             z-index: 9999;
-            bottom: 125%;
+            bottom: 105%;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;

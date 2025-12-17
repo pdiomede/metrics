@@ -536,23 +536,28 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
             font-weight: bold;
             transition: all 0.3s ease;
             user-select: none;
-            padding: 4px 8px;
+            padding: 6px;
             border-radius: 6px;
-            background: rgba(76, 175, 80, 0.3);
-            border: 2px solid #4CAF50;
+            background: rgba(111, 76, 255, 0.3);
+            border: 2px solid #6F4CFF;
             margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
         }}
         
         .toggle-arrow:hover {{
             color: #FFFFFF;
-            background: rgba(76, 175, 80, 0.5);
-            border-color: #66BB6A;
+            background: rgba(111, 76, 255, 0.5);
+            border-color: #8B6FFF;
             transform: scale(1.1);
         }}
         
         .toggle-arrow.expanded {{
             transform: rotate(90deg);
-            background: rgba(76, 175, 80, 0.5);
+            background: rgba(111, 76, 255, 0.5);
         }}
         
         .toggle-arrow.expanded:hover {{

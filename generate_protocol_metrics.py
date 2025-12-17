@@ -1114,6 +1114,46 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                 </div>
             </div>
             
+            <div id="delegationTable">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Event</th>
+                            <th style="width: 20%;">GRT</th>
+                            <th style="width: 20%;">Date</th>
+                            <th style="width: 20%;">Indexer</th>
+                            <th style="width: 20%;">Delegator</th>
+                            <th style="width: 5%;">Tx</th>
+                        </tr>
+                    </thead>
+                    <tbody>"""
+    
+    # Add delegation events to table (filter for >= 10,000 GRT)
+    for event in events_list:
+        # Filter: only show transactions of 10,000 GRT or more
+        if event["tokens"] < 10000:
+            continue
+            
+        event_label = "✅ Delegation" if event["type"] == "delegation" else "❌ Undelegation"
+        event_date = datetime.fromtimestamp(event["timestamp"], tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+        indexer_short = event["indexer"][:8] + "..." + event["indexer"][-6:]
+        delegator_short = event["delegator"][:8] + "..." + event["delegator"][-6:]
+        
+        html_content += f"""
+                        <tr>
+                            <td><span style="font-size: 0.85em;">{event_label}</span></td>
+                            <td>{event["tokens"]:,}</td>
+                            <td><span style="font-size: 0.85em;">{event_date}</span></td>
+                            <td><a href="https://thegraph.com/explorer/profile/{event['indexer']}" target="_blank"><span style="font-size: 0.85em;">{indexer_short}</span></a></td>
+                            <td><a href="https://thegraph.com/explorer/profile/{event['delegator']}" target="_blank"><span style="font-size: 0.85em;">{delegator_short}</span></a></td>
+                            <td><a href="https://arbiscan.io/tx/{event['tx_hash']}" target="_blank"><span style="font-size: 0.85em;">view</span></a></td>
+                        </tr>"""
+    
+    html_content += f"""
+                    </tbody>
+                </table>
+            </div>
+            
             <div class="stats-container" style="margin-top: 15px;">
                 <div class="stats-card">
                     <h2>Total Rewards<br/>Distributed</h2>
@@ -1215,46 +1255,6 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                         </tbody>
                     </table>
                 </div>
-            </div>
-            
-            <div id="delegationTable">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 15%;">Event</th>
-                            <th style="width: 20%;">GRT</th>
-                            <th style="width: 20%;">Date</th>
-                            <th style="width: 20%;">Indexer</th>
-                            <th style="width: 20%;">Delegator</th>
-                            <th style="width: 5%;">Tx</th>
-                        </tr>
-                    </thead>
-                    <tbody>"""
-    
-    # Add delegation events to table (filter for >= 10,000 GRT)
-    for event in events_list:
-        # Filter: only show transactions of 10,000 GRT or more
-        if event["tokens"] < 10000:
-            continue
-            
-        event_label = "✅ Delegation" if event["type"] == "delegation" else "❌ Undelegation"
-        event_date = datetime.fromtimestamp(event["timestamp"], tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
-        indexer_short = event["indexer"][:8] + "..." + event["indexer"][-6:]
-        delegator_short = event["delegator"][:8] + "..." + event["delegator"][-6:]
-        
-        html_content += f"""
-                        <tr>
-                            <td><span style="font-size: 0.85em;">{event_label}</span></td>
-                            <td>{event["tokens"]:,}</td>
-                            <td><span style="font-size: 0.85em;">{event_date}</span></td>
-                            <td><a href="https://thegraph.com/explorer/profile/{event['indexer']}" target="_blank"><span style="font-size: 0.85em;">{indexer_short}</span></a></td>
-                            <td><a href="https://thegraph.com/explorer/profile/{event['delegator']}" target="_blank"><span style="font-size: 0.85em;">{delegator_short}</span></a></td>
-                            <td><a href="https://arbiscan.io/tx/{event['tx_hash']}" target="_blank"><span style="font-size: 0.85em;">view</span></a></td>
-                        </tr>"""
-    
-    html_content += f"""
-                    </tbody>
-                </table>
             </div>
             
             <div class="stats-container" style="margin-top: 15px;">

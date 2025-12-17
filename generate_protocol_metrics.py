@@ -796,8 +796,8 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                 <div class="stats-card tooltip">
                     <h2>Net</h2>
                     <div class="total" style="color: {net_color};">{net:,}</div>
-                    <div class="percentage">
-                        <span style="font-size: 0.75em;">GRT</span>
+                    <div class="percentage" style="font-size: 0.75em;">
+                        <span>GRT</span>
                         <span class="toggle-arrow" onclick="toggleNetExpand(this)" title="Expand delegation events">›</span>
                     </div>
                     <span class="tooltip-text">Calculated for the last 1,000 transactions (table shows ≥10,000 GRT)</span>

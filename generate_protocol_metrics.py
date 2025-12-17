@@ -1115,6 +1115,22 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
         
         <div class="content">
             <div class="stats-container">
+                <div class="stats-card">
+                    <h2>Total Subgraphs</h2>
+                    <div class="total">{total_all_networks:,}</div>
+                    <div class="percentage"></div>
+                </div>
+                <div class="stats-card">
+                    <h2>Total Subgraphs<br/>(Top 20 Chains)</h2>
+                    <div class="total" style="color: #4CAF50;">{total_top_20:,}</div>
+                    <div class="percentage">
+                        <span>{percentage:.1f}% of total</span>
+                        <span class="toggle-arrow" onclick="toggleExpand(this)" title="Expand network details">›</span>
+                    </div>
+                </div>
+            </div>
+            
+            <table id="networkTable" style="display: none; transition: all 0.3s ease;">
                 <div class="stats-card tooltip">
                     <h2>Total Delegated</h2>
                     <div class="total" style="color: #4CAF50;">{total_delegated:,}</div>
@@ -1292,22 +1308,6 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
     html_content += f"""
                         </tbody>
                     </table>
-                </div>
-            </div>
-            
-            <div class="stats-container" style="margin-top: 15px;">
-                <div class="stats-card">
-                    <h2>Total Subgraphs<br/>(All Networks)</h2>
-                    <div class="total">{total_all_networks:,}</div>
-                    <div class="percentage"></div>
-                </div>
-                <div class="stats-card">
-                    <h2>Total Subgraphs<br/>(Top 20 Chains)</h2>
-                    <div class="total">{total_top_20:,}</div>
-                    <div class="percentage">
-                        <span>{percentage:.1f}% of total</span>
-                        <span class="toggle-arrow" onclick="toggleExpand(this)" title="Expand table">›</span>
-                    </div>
                 </div>
             </div>
             

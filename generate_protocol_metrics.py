@@ -1191,12 +1191,12 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                     <div class="total" style="color: #4ECDC4;">{delegator_rewards:,}</div>
                     <div class="percentage" style="font-size: 0.75em;">
                         <span>GRT</span>
-                        <span class="toggle-arrow" onclick="toggleNetExpand(this)" title="Expand delegation events">›</span>
+                        <span class="toggle-arrow" onclick="toggleNetworkComparison(this)" title="Expand network comparison">›</span>
                     </div>
                 </div>
             </div>
             
-            <div id="delegationTable">
+            <div id="networkComparisonTable">
                 <table>
                     <thead>
                         <tr>
@@ -1254,13 +1254,13 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                     <div class="total" style="color: {net_color};">{net:,}</div>
                     <div class="percentage" style="font-size: 0.75em;">
                         <span>GRT</span>
-                        <span class="toggle-arrow" onclick="toggleNetworkComparison(this)" title="Expand network comparison">›</span>
+                        <span class="toggle-arrow" onclick="toggleNetExpand(this)" title="Expand delegation events">›</span>
                     </div>
                     <span class="tooltip-text">Calculated for the last 1,000 transactions (table shows ≥10,000 GRT)</span>
                 </div>
             </div>
             
-            <div id="networkComparisonTable">
+            <div id="delegationTable">
                 <table>
                     <thead>
                         <tr>

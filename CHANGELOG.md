@@ -8,14 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Tooltips on delegation cards**: All three delegation cards now display tooltip on hover
+  - Tooltip text: "Calculated for the last 1,000 transactions"
+  - Appears on Total Delegated, Total Undelegated, and Net cards
+  - Smooth fade-in/out animation with arrow pointer
+- **Delegation events table**: Expandable table showing recent delegation activity
+  - Triggered by clicking Net card arrow button (›/∨)
+  - Displays 50 most recent events from 1,000 fetched
+  - 6 columns: Event, GRT, Date, Indexer, Delegator, Tx
+  - Event types: ✅ Delegation | ❌ Undelegation
+  - Shortened addresses (first 8 + last 6 characters) for better readability
+  - Direct links to The Graph Explorer (indexers/delegators) and Arbiscan (transactions)
+  - Table hidden by default, toggles on/off with arrow click
 - **Three delegation metrics cards** at the top of dashboard:
   - Total Delegated (green) - displays sum of all delegation events in GRT
   - Total Undelegated (red) - displays sum of all undelegation events in GRT
   - Net (dynamic color) - shows net delegation with arrow toggle button
-- `fetch_delegation_metrics()` function to query delegation data from The Graph Network
+- `fetch_delegation_metrics()` function enhanced to return full event details
+  - Now returns tuple: (total_delegated, total_undelegated, net, events_list)
+  - Each event includes: type, tokens, delegator, indexer, timestamp, tx_hash
 - Queries `stakeDelegateds` and `stakeDelegatedLockeds` events (1000 most recent each)
 - Dynamic color coding: green for positive net, red for negative net
-- Toggle arrow button on Net card (placeholder for future functionality)
 - Two compact stats cards (200x180px) displaying subgraph metrics side by side
 - Total Subgraphs (All Networks) card showing complete network count
 - Total Subgraphs (Top 20 Chains) card with percentage of total networks
@@ -46,10 +59,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensured green numbers align at exactly the same vertical position
 
 ### Technical
+- Added tooltip CSS styling with hover effects and arrow pointer
+- Tooltip positioned absolute with bottom: 125% (appears above cards)
+- Enhanced `fetch_delegation_metrics()` to fetch full event details (delegator, indexer, timestamp, tx_hash)
+- Added `#delegationTable` with responsive styling
+- Updated `toggleNetExpand()` JavaScript function to control delegation table visibility
+- Table includes datetime conversion from Unix timestamp to UTC format
 - Added delegation metrics data fetching from subgraph `9wzatP4KXm4WinEhB31MdKST949wCH8ZnkGe8o3DLTwp`
-- Fetches delegation events via GraphQL queries
+- Fetches delegation events via GraphQL queries with extended fields
 - Converts token values from wei to GRT (divides by 10^18)
-- Added `toggleNetExpand()` JavaScript function for Net card arrow
+- Events sorted by timestamp in descending order (most recent first)
 - Added calculation for total subgraphs across all networks (not just top 20)
 - Implemented percentage calculation (top 20 / total * 100)
 - Changed layout system from Flexbox to CSS Grid (3 rows: 45px, 1fr, 35px)

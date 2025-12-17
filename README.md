@@ -7,7 +7,8 @@ A Python-generated static HTML dashboard displaying key metrics for The Graph Pr
 - 💰 **Delegation Metrics**: Three cards showing Total Delegated, Total Undelegated, and Net (in GRT)
   - Real-time data from delegation events on The Graph Network
   - Color-coded: green for delegations, red for undelegations, dynamic for net
-  - Interactive arrow button on Net card (placeholder for future expansion)
+  - Tooltips on hover showing "Calculated for the last 1,000 transactions"
+  - Interactive arrow button on Net card to expand/collapse delegation events table
 - 📊 **Dual Subgraph Cards**: Two compact cards showing Total Subgraphs (All Networks) and Top 20 Chains
 - 📈 **Percentage Analysis**: Shows what percentage of total subgraphs the top 20 chains represent
 - 🔽 **Collapsible Table**: Interactive arrow button to show/hide the detailed network table
@@ -57,10 +58,24 @@ This will generate an `index.html` file in the same directory. Open it in your w
 
 ### Delegation Metrics (Top Row)
 - **Card 1**: Total Delegated - Total GRT delegated across all delegation events (green)
+  - Hover to see tooltip: "Calculated for the last 1,000 transactions"
 - **Card 2**: Total Undelegated - Total GRT undelegated across all undelegation events (red)
+  - Hover to see tooltip: "Calculated for the last 1,000 transactions"
 - **Card 3**: Net - Net delegation (Delegated - Undelegated) with dynamic color
   - Green if positive, red if negative
-  - Arrow button (›) for future expansion functionality
+  - Hover to see tooltip: "Calculated for the last 1,000 transactions"
+  - Arrow button (›/∨) to expand/collapse delegation events table
+
+### Delegation Events Table (Collapsible)
+Accessible by clicking the arrow on the Net card:
+- **Event**: Type of transaction (✅ Delegation or ❌ Undelegation)
+- **GRT**: Amount of GRT tokens in the transaction
+- **Date**: Transaction timestamp in UTC (YYYY-MM-DD HH:MM format)
+- **Indexer**: Indexer address (linked to Graph Explorer, shortened display)
+- **Delegator**: Delegator address (linked to Graph Explorer, shortened display)
+- **Tx**: Link to view transaction on Arbiscan
+- **Displays**: 50 most recent events from the 1,000 fetched
+- **Default**: Hidden (click arrow to reveal)
 
 ### Subgraph Metrics (Second Row)
 - **Card 1**: Total Subgraphs (All Networks) - Shows complete count across all 150+ networks

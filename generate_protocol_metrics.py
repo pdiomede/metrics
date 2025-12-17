@@ -93,6 +93,56 @@ def log_message(message: str):
     print(timestamped)
 
 
+def fetch_rewards_metrics(api_key: str) -> tuple:
+    """
+    Fetch rewards distribution metrics from The Graph Network (Arbitrum).
+    
+    Args:
+        api_key: The Graph API key
+        
+    Returns:
+        Tuple of (total_rewards, indexer_rewards, delegator_rewards)
+    """
+    # Arbitrum Network Subgraph ID
+    subgraph_id = "DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp"
+    url = f"https://gateway-arbitrum.network.thegraph.com/api/{api_key}/subgraphs/id/{subgraph_id}"
+    headers = {"Content-Type": "application/json"}
+    
+    log_message("Fetching rewards distribution metrics...")
+    
+    query = """
+    {
+      graphNetwork(id: "1") {
+        totalIndexingRewards
+        totalIndexingIndexerRewards
+        totalIndexingDelegatorRewards
+      }
+    }
+    """
+    
+    try:
+        response = requests.post(url, json={"query": query}, headers=headers)
+        if response.status_code == 200:
+            data = response.json().get("data", {}).get("graphNetwork", {})
+            if data:
+                # Convert from wei to GRT (divide by 10^18)
+                total_rewards = int(data.get("totalIndexingRewards", "0")) // 10**18
+                indexer_rewards = int(data.get("totalIndexingIndexerRewards", "0")) // 10**18
+                delegator_rewards = int(data.get("totalIndexingDelegatorRewards", "0")) // 10**18
+                
+                log_message(f"Rewards metrics: Total={total_rewards:,}, Indexers={indexer_rewards:,}, Delegators={delegator_rewards:,}")
+                return (total_rewards, indexer_rewards, delegator_rewards)
+            else:
+                log_message("No data returned from graphNetwork query")
+                return (0, 0, 0)
+        else:
+            log_message(f"Failed to fetch rewards metrics: {response.status_code}")
+            return (0, 0, 0)
+    except Exception as e:
+        log_message(f"Error fetching rewards metrics: {e}")
+        return (0, 0, 0)
+
+
 def fetch_delegation_metrics(api_key: str) -> tuple:
     """
     Fetch delegation and undelegation metrics from The Graph Network.
@@ -272,13 +322,14 @@ def fetch_network_subgraph_counts(api_key: str) -> List[NetworkIndexerData]:
     return result
 
 
-def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: tuple, output_path: str = "index.html"):
+def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: tuple, rewards_metrics: tuple, output_path: str = "index.html"):
     """
     Generate HTML dashboard with network metrics.
     
     Args:
         data: List of NetworkIndexerData objects
         delegation_metrics: Tuple of (total_delegated, total_undelegated, net, events_list)
+        rewards_metrics: Tuple of (total_rewards, indexer_rewards, delegator_rewards)
         output_path: Path to save the HTML file
     """
     # Calculate total across all networks
@@ -294,6 +345,9 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
     # Unpack delegation metrics
     total_delegated, total_undelegated, net, events_list = delegation_metrics
     net_color = "#4CAF50" if net >= 0 else "#f44336"
+    
+    # Unpack rewards metrics
+    total_rewards, indexer_rewards, delegator_rewards = rewards_metrics
     
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     
@@ -750,6 +804,24 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                 </div>
             </div>
             
+            <div class="stats-container" style="margin-top: 15px;">
+                <div class="stats-card">
+                    <h2>Total Rewards<br/>Distributed</h2>
+                    <div class="total">{total_rewards:,}</div>
+                    <div class="percentage" style="font-size: 0.75em;">GRT</div>
+                </div>
+                <div class="stats-card">
+                    <h2>GRT Kept by<br/>Indexers</h2>
+                    <div class="total" style="color: #FF6B6B;">{indexer_rewards:,}</div>
+                    <div class="percentage" style="font-size: 0.75em;">GRT</div>
+                </div>
+                <div class="stats-card">
+                    <h2>GRT Given to<br/>Delegators</h2>
+                    <div class="total" style="color: #4ECDC4;">{delegator_rewards:,}</div>
+                    <div class="percentage" style="font-size: 0.75em;">GRT</div>
+                </div>
+            </div>
+            
             <div id="delegationTable">
                 <table>
                     <thead>
@@ -924,6 +996,9 @@ def main():
         log_message("Please create a .env file with GRAPH_API_KEY=your_api_key")
         return
     
+    # Fetch rewards metrics
+    rewards_metrics = fetch_rewards_metrics(api_key)
+    
     # Fetch delegation metrics
     delegation_metrics = fetch_delegation_metrics(api_key)
     
@@ -935,7 +1010,7 @@ def main():
         return
     
     # Generate HTML dashboard
-    generate_html_dashboard(network_data, delegation_metrics)
+    generate_html_dashboard(network_data, delegation_metrics, rewards_metrics)
     
     log_message("Dashboard generation completed successfully!")
 

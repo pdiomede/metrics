@@ -333,35 +333,44 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             background: rgba(12, 10, 29, 0.6);
             border: 1px solid #9CA3AF;
             border-radius: 10px;
-            padding: 15px 20px;
+            padding: 20px;
             text-align: center;
             flex: 0 0 200px;
-            min-height: 180px;
+            height: 180px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }}
         
         .stats-card h2 {{
             font-size: 0.95em;
-            margin-bottom: 12px;
+            margin: 0;
             color: #F8F6FF;
             font-weight: 400;
             line-height: 1.2;
+            height: 2.4em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         
         .stats-card .total {{
             font-size: 2em;
             color: #4CAF50;
             font-weight: 600;
-            margin: 8px 0;
+            margin: 0;
+            line-height: 1;
         }}
         
         .stats-card .percentage {{
             font-size: 0.85em;
             color: #9CA3AF;
-            margin-top: 5px;
+            margin: 0;
+            height: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
         
         table {{

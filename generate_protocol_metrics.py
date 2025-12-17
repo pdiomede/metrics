@@ -1131,6 +1131,51 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
             </div>
             
             <table id="networkTable" style="display: none; transition: all 0.3s ease;">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">Rank</th>
+                        <th style="width: 40%;">Network</th>
+                        <th style="width: 25%;">Subgraph Count</th>
+                        <th style="width: 25%;">Unique Indexers</th>
+                    </tr>
+                </thead>
+                <tbody>"""
+    
+    # Add table rows
+    for idx, entry in enumerate(sorted_data, 1):
+        logo = NETWORK_LOGOS.get(entry.network_name.lower(), "")
+        logo_html = f'<img src="{logo}" alt="{entry.network_name}" class="network-logo" onerror="this.style.display=\'none\'" />' if logo else ""
+        
+        # Format network name
+        if entry.network_name.lower() == "mainnet":
+            name = "Ethereum (Mainnet)"
+        elif entry.network_name.lower() == "matic":
+            name = "Polygon (Matic)"
+        else:
+            name = entry.network_name.title()
+        
+        html_content += f"""
+                    <tr>
+                        <td><span class="rank">#{idx}</span></td>
+                        <td>
+                            <div class="network-name">
+                                {logo_html}
+                                <a href="https://thegraph.com/explorer?indexedNetwork={entry.network_name}&orderBy=Query+Count&orderDirection=desc" 
+                                   target="_blank" style="color: #F8F6FF; text-decoration: none;">
+                                    {name}
+                                </a>
+                            </div>
+                        </td>
+                        <td>{entry.subgraph_count:,}</td>
+                        <td>{entry.unique_indexer_count}</td>
+                    </tr>
+"""
+    
+    html_content += f"""
+                </tbody>
+            </table>
+            
+            <div class="stats-container" style="margin-top: 15px;">
                 <div class="stats-card tooltip">
                     <h2>Total Delegated</h2>
                     <div class="total" style="color: #4CAF50;">{total_delegated:,}</div>

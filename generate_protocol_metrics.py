@@ -243,18 +243,48 @@ def fetch_network_comparison_stats(api_key: str) -> dict:
     }
     """
     
-    active_delegators_query = """
-    {
-      delegators(where: {activeStakesCount_gt: 0}, first: 1000) {
-        id
-      }
-    }
-    """
-    
     result = {
         'arbitrum': {},
         'ethereum': {}
     }
+    
+    # Helper function to count all active delegators with pagination
+    def count_active_delegators(url, headers, network_name):
+        active_delegators_count = 0
+        skip = 0
+        batch_size = 1000
+        
+        log_message(f"Counting active delegators for {network_name}...")
+        
+        while True:
+            active_delegators_query = f"""
+            {{
+              delegators(where: {{activeStakesCount_gt: 0}}, first: {batch_size}, skip: {skip}) {{
+                id
+              }}
+            }}
+            """
+            
+            try:
+                response = requests.post(url, json={"query": active_delegators_query}, headers=headers)
+                if response.status_code == 200:
+                    delegators = response.json().get("data", {}).get("delegators", [])
+                    batch_count = len(delegators)
+                    active_delegators_count += batch_count
+                    
+                    # If we got less than batch_size, we've reached the end
+                    if batch_count < batch_size:
+                        break
+                    
+                    skip += batch_size
+                else:
+                    break
+            except Exception as e:
+                log_message(f"Error counting active delegators: {e}")
+                break
+        
+        log_message(f"{network_name} active delegators: {active_delegators_count:,}")
+        return active_delegators_count
     
     # Fetch Arbitrum stats
     try:
@@ -263,11 +293,8 @@ def fetch_network_comparison_stats(api_key: str) -> dict:
         if response.status_code == 200:
             data = response.json().get("data", {}).get("graphNetwork", {})
             if data:
-                # Get active delegators count (simplified - first 1000)
-                active_del_response = requests.post(arb_url, json={"query": active_delegators_query}, headers=headers)
-                active_delegators_count = 0
-                if active_del_response.status_code == 200:
-                    active_delegators_count = len(active_del_response.json().get("data", {}).get("delegators", []))
+                # Get full count of active delegators with pagination
+                active_delegators_count = count_active_delegators(arb_url, headers, "Arbitrum")
                 
                 result['arbitrum'] = {
                     'total_rewards': int(data.get("totalIndexingRewards", "0")) // 10**18,
@@ -287,11 +314,8 @@ def fetch_network_comparison_stats(api_key: str) -> dict:
         if response.status_code == 200:
             data = response.json().get("data", {}).get("graphNetwork", {})
             if data:
-                # Get active delegators count (simplified - first 1000)
-                active_del_response = requests.post(eth_url, json={"query": active_delegators_query}, headers=headers)
-                active_delegators_count = 0
-                if active_del_response.status_code == 200:
-                    active_delegators_count = len(active_del_response.json().get("data", {}).get("delegators", []))
+                # Get full count of active delegators with pagination
+                active_delegators_count = count_active_delegators(eth_url, headers, "Ethereum")
                 
                 result['ethereum'] = {
                     'total_rewards': int(data.get("totalIndexingRewards", "0")) // 10**18,
@@ -1190,21 +1214,35 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
     arb_stats = network_comparison.get('arbitrum', {})
     eth_stats = network_comparison.get('ethereum', {})
     
+    # Calculate percentages for Arbitrum
+    arb_total = arb_stats.get('total_rewards', 0)
+    arb_indexer = arb_stats.get('indexer_rewards', 0)
+    arb_delegator = arb_stats.get('delegator_rewards', 0)
+    arb_indexer_pct = (arb_indexer / arb_total * 100) if arb_total > 0 else 0
+    arb_delegator_pct = (arb_delegator / arb_total * 100) if arb_total > 0 else 0
+    
+    # Calculate percentages for Ethereum
+    eth_total = eth_stats.get('total_rewards', 0)
+    eth_indexer = eth_stats.get('indexer_rewards', 0)
+    eth_delegator = eth_stats.get('delegator_rewards', 0)
+    eth_indexer_pct = (eth_indexer / eth_total * 100) if eth_total > 0 else 0
+    eth_delegator_pct = (eth_delegator / eth_total * 100) if eth_total > 0 else 0
+    
     html_content += f"""
                         <tr>
                             <td class="row-label">Total Rewards:</td>
-                            <td>{arb_stats.get('total_rewards', 0):,} GRT</td>
-                            <td>{eth_stats.get('total_rewards', 0):,} GRT</td>
+                            <td>{arb_total:,} GRT</td>
+                            <td>{eth_total:,} GRT</td>
                         </tr>
                         <tr>
                             <td class="row-label">Indexer Rewards:</td>
-                            <td>{arb_stats.get('indexer_rewards', 0):,} GRT</td>
-                            <td>{eth_stats.get('indexer_rewards', 0):,} GRT</td>
+                            <td>{arb_indexer:,} GRT ({arb_indexer_pct:.1f}%)</td>
+                            <td>{eth_indexer:,} GRT ({eth_indexer_pct:.1f}%)</td>
                         </tr>
                         <tr>
                             <td class="row-label">Delegator Rewards:</td>
-                            <td>{arb_stats.get('delegator_rewards', 0):,} GRT</td>
-                            <td>{eth_stats.get('delegator_rewards', 0):,} GRT</td>
+                            <td>{arb_delegator:,} GRT ({arb_delegator_pct:.1f}%)</td>
+                            <td>{eth_delegator:,} GRT ({eth_delegator_pct:.1f}%)</td>
                         </tr>
                         <tr>
                             <td class="row-label">Total Delegators (historical):</td>
@@ -1213,8 +1251,8 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                         </tr>
                         <tr>
                             <td class="row-label">Active Delegators (with GRT):</td>
-                            <td>{arb_stats.get('active_delegators', 0):,}+</td>
-                            <td>{eth_stats.get('active_delegators', 0):,}+</td>
+                            <td>{arb_stats.get('active_delegators', 0):,}</td>
+                            <td>{eth_stats.get('active_delegators', 0):,}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -93,6 +93,68 @@ def log_message(message: str):
     print(timestamped)
 
 
+def fetch_delegation_metrics(api_key: str) -> tuple:
+    """
+    Fetch delegation and undelegation metrics from The Graph Network.
+    
+    Args:
+        api_key: The Graph API key
+        
+    Returns:
+        Tuple of (total_delegated, total_undelegated, net)
+    """
+    url = f"https://gateway.thegraph.com/api/{api_key}/subgraphs/id/9wzatP4KXm4WinEhB31MdKST949wCH8ZnkGe8o3DLTwp"
+    headers = {"Content-Type": "application/json"}
+    
+    log_message("Fetching delegation metrics...")
+    
+    # Fetch delegation events
+    query_delegations = """
+    {
+      stakeDelegateds(first: 1000, orderBy: blockTimestamp, orderDirection: desc) {
+        tokens
+      }
+    }
+    """
+    
+    # Fetch undelegation events  
+    query_undelegations = """
+    {
+      stakeDelegatedLockeds(first: 1000, orderBy: blockTimestamp, orderDirection: desc) {
+        tokens
+      }
+    }
+    """
+    
+    try:
+        # Fetch delegations
+        response_del = requests.post(url, json={"query": query_delegations}, headers=headers)
+        if response_del.status_code == 200:
+            delegations = response_del.json().get("data", {}).get("stakeDelegateds", [])
+            total_delegated = sum(int(d["tokens"]) for d in delegations) // 10**18
+        else:
+            log_message(f"Failed to fetch delegations: {response_del.status_code}")
+            total_delegated = 0
+        
+        # Fetch undelegations
+        response_undel = requests.post(url, json={"query": query_undelegations}, headers=headers)
+        if response_undel.status_code == 200:
+            undelegations = response_undel.json().get("data", {}).get("stakeDelegatedLockeds", [])
+            total_undelegated = sum(int(u["tokens"]) for u in undelegations) // 10**18
+        else:
+            log_message(f"Failed to fetch undelegations: {response_undel.status_code}")
+            total_undelegated = 0
+        
+        net = total_delegated - total_undelegated
+        log_message(f"Delegation metrics: Delegated={total_delegated:,}, Undelegated={total_undelegated:,}, Net={net:,}")
+        
+        return (total_delegated, total_undelegated, net)
+        
+    except Exception as e:
+        log_message(f"Error fetching delegation metrics: {e}")
+        return (0, 0, 0)
+
+
 def fetch_network_subgraph_counts(api_key: str) -> List[NetworkIndexerData]:
     """
     Fetch network names and count subgraphs and unique indexers per network.
@@ -175,12 +237,13 @@ def fetch_network_subgraph_counts(api_key: str) -> List[NetworkIndexerData]:
     return result
 
 
-def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "index.html"):
+def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: tuple, output_path: str = "index.html"):
     """
     Generate HTML dashboard with network metrics.
     
     Args:
         data: List of NetworkIndexerData objects
+        delegation_metrics: Tuple of (total_delegated, total_undelegated, net)
         output_path: Path to save the HTML file
     """
     # Calculate total across all networks
@@ -192,6 +255,10 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
     
     # Calculate percentage
     percentage = (total_top_20 / total_all_networks * 100) if total_all_networks > 0 else 0
+    
+    # Unpack delegation metrics
+    total_delegated, total_undelegated, net = delegation_metrics
+    net_color = "#4CAF50" if net >= 0 else "#f44336"
     
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     
@@ -561,6 +628,27 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
         <div class="content">
             <div class="stats-container">
                 <div class="stats-card">
+                    <h2>Total Delegated</h2>
+                    <div class="total" style="color: #4CAF50;">{total_delegated:,}</div>
+                    <div class="percentage" style="font-size: 0.75em;">GRT</div>
+                </div>
+                <div class="stats-card">
+                    <h2>Total Undelegated</h2>
+                    <div class="total" style="color: #f44336;">{total_undelegated:,}</div>
+                    <div class="percentage" style="font-size: 0.75em;">GRT</div>
+                </div>
+                <div class="stats-card">
+                    <h2>Net</h2>
+                    <div class="total" style="color: {net_color};">{net:,}</div>
+                    <div class="percentage">
+                        <span style="font-size: 0.75em;">GRT</span>
+                        <span class="toggle-arrow" onclick="toggleNetExpand(this)" title="Expand details">›</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-container" style="margin-top: 15px;">
+                <div class="stats-card">
                     <h2>Total Subgraphs<br/>(All Networks)</h2>
                     <div class="total">{total_all_networks:,}</div>
                     <div class="percentage"></div>
@@ -570,7 +658,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
                     <div class="total">{total_top_20:,}</div>
                     <div class="percentage">
                         <span>{percentage:.1f}% of total</span>
-                        <span class="toggle-arrow" onclick="toggleExpand(this)" title="Expand details">›</span>
+                        <span class="toggle-arrow" onclick="toggleExpand(this)" title="Expand table">›</span>
                     </div>
                 </div>
             </div>
@@ -653,6 +741,18 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
                 console.log('Table hidden');
             }}
         }}
+        
+        function toggleNetExpand(element) {{
+            element.classList.toggle('expanded');
+            
+            // Placeholder for future functionality
+            if (element.classList.contains('expanded')) {{
+                console.log('Net expanded - future action here');
+                // Future: Show delegation/undelegation details
+            }} else {{
+                console.log('Net collapsed');
+            }}
+        }}
     </script>
 </body>
 </html>
@@ -678,6 +778,9 @@ def main():
         log_message("Please create a .env file with GRAPH_API_KEY=your_api_key")
         return
     
+    # Fetch delegation metrics
+    delegation_metrics = fetch_delegation_metrics(api_key)
+    
     # Fetch network data
     network_data = fetch_network_subgraph_counts(api_key)
     
@@ -686,7 +789,7 @@ def main():
         return
     
     # Generate HTML dashboard
-    generate_html_dashboard(network_data)
+    generate_html_dashboard(network_data, delegation_metrics)
     
     log_message("Dashboard generation completed successfully!")
 

@@ -741,7 +741,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
         .stats-card h2 {{
             font-size: 0.95em;
             margin: 0;
-            color: #F8F6FF;
+            color: #494755;
             font-weight: 400;
             line-height: 1.2;
             align-self: start;
@@ -750,7 +750,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
         
         .stats-card .total {{
             font-size: 1.5em;
-            color: #4CAF50;
+            color: #F8F6FF;
             font-weight: 600;
             margin: 0;
             line-height: 1;
@@ -1122,7 +1122,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                 </div>
                 <div class="stats-card">
                     <h2>Total Subgraphs<br/>(Top 20 Chains)</h2>
-                    <div class="total" style="color: #4CAF50;">{total_top_20:,}</div>
+                    <div class="total">{total_top_20:,}</div>
                     <div class="percentage">
                         <span>{percentage:.1f}% of total</span>
                         <span class="toggle-arrow" onclick="toggleExpand(this)" title="Expand network details">›</span>
@@ -1183,12 +1183,12 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
                 </div>
                 <div class="stats-card">
                     <h2>GRT Kept by<br/>Indexers</h2>
-                    <div class="total" style="color: #FF6B6B;">{indexer_rewards:,}</div>
+                    <div class="total">{indexer_rewards:,}</div>
                     <div class="percentage" style="font-size: 0.75em;">GRT</div>
                 </div>
                 <div class="stats-card">
                     <h2>GRT Given to<br/>Delegators</h2>
-                    <div class="total" style="color: #4ECDC4;">{delegator_rewards:,}</div>
+                    <div class="total">{delegator_rewards:,}</div>
                     <div class="percentage" style="font-size: 0.75em;">
                         <span>GRT</span>
                         <span class="toggle-arrow" onclick="toggleNetworkComparison(this)" title="Expand network comparison">›</span>

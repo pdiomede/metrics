@@ -531,21 +531,32 @@ def generate_html_dashboard(data: List[NetworkIndexerData], delegation_metrics: 
         
         .toggle-arrow {{
             cursor: pointer;
-            font-size: 1.2em;
-            color: #9CA3AF;
+            font-size: 1.5em;
+            color: #F8F6FF;
+            font-weight: bold;
             transition: all 0.3s ease;
             user-select: none;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(76, 175, 80, 0.3);
+            border: 2px solid #4CAF50;
+            margin-left: 8px;
         }}
         
         .toggle-arrow:hover {{
-            color: #F8F6FF;
-            background: rgba(156, 163, 175, 0.2);
+            color: #FFFFFF;
+            background: rgba(76, 175, 80, 0.5);
+            border-color: #66BB6A;
+            transform: scale(1.1);
         }}
         
         .toggle-arrow.expanded {{
             transform: rotate(90deg);
+            background: rgba(76, 175, 80, 0.5);
+        }}
+        
+        .toggle-arrow.expanded:hover {{
+            transform: rotate(90deg) scale(1.1);
         }}
         
         .tooltip {{

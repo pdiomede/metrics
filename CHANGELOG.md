@@ -54,6 +54,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Two-row card layout: delegation metrics on top, subgraph metrics below
 
 ### Changed
+- **Enhanced arrow button visibility and styling**:
+  - Increased font size from 1.2em to 1.5em (25% larger)
+  - Changed color from gray (#9CA3AF) to white (#F8F6FF)
+  - Added bold font weight for better prominence
+  - Added green background (rgba(76, 175, 80, 0.3)) and border (2px solid #4CAF50)
+  - Increased padding from 2px 6px to 4px 8px (more clickable area)
+  - Added 8px left margin for spacing
+  - Enhanced hover effects: brighter background, scale animation (1.1x), lighter border
+  - Expanded state shows visible background
+  - Combined transforms for expanded hover state (rotation + scale)
+- **Tooltip positioning**: Adjusted from 125% to 105% for closer proximity to cards
+- **Footer font size**: Reduced to 0.8em with smaller GitHub icon (14px)
+- **Number font size in cards**: Reduced from 2em to 1.5em to fit square boxes
 - Replaced single rectangular stats card with two compact cards
 - Made stats cards smaller (200x180px instead of 250x250px)
 - Aligned stats cards to the left instead of center
@@ -68,11 +81,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reduced padding and gaps for more efficient space usage
 
 ### Fixed
+- **GRT font size consistency in Net card**: Fixed font-size styling inconsistency
+  - Moved `font-size: 0.75em` from inner span to percentage div
+  - Now matches styling of Total Delegated and Total Undelegated cards
+  - GRT text displays at same size across all delegation cards
+- **f-string formatting for subgraph cards**: Fixed missing 'f' prefix on line 775
+  - Variables now properly interpolate (total_all_networks, total_top_20, percentage)
+  - Cards display actual numbers instead of template strings
 - Perfect vertical text alignment across both stats cards using CSS Grid
 - Fixed heights for title (45px), number section (flexible), and percentage (35px)
 - Ensured green numbers align at exactly the same vertical position
 
 ### Technical
+- **Arrow button CSS enhancements**:
+  - Added background and border styling with green theme
+  - Scale transform (1.1x) on hover for interactive feedback
+  - Combined transforms for expanded state: `rotate(90deg) scale(1.1)`
+  - Increased border-radius from 4px to 6px
+- **Link styling in delegation table**: Added `#delegationTable a` CSS rules
+  - White color (#F8F6FF), no underline by default
+  - Underline on hover only
 - Added rewards metrics fetching from Arbitrum Network subgraph
 - Query uses graphNetwork(id: "1") to get total rewards, indexer rewards, delegator rewards
 - Wei to GRT conversion (division by 10^18) for all reward values

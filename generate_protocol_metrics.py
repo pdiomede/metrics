@@ -452,6 +452,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             color: #9CA3AF;
             margin-top: 30px;
             border-top: 1px solid #9CA3AF;
+            font-size: 0.8em;
         }}
         
         .footer-content {{
@@ -499,8 +500,8 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
         }}
         
         .github-icon {{
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             vertical-align: middle;
             margin-right: 4px;
         }}

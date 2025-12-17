@@ -344,12 +344,12 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
         
         .stats-card h2 {{
             font-size: 0.95em;
-            margin: 0 0 20px 0;
+            margin: 0;
             padding-top: 5px;
             color: #F8F6FF;
             font-weight: 400;
             line-height: 1.2;
-            min-height: 2.4em;
+            height: 50px;
             display: flex;
             align-items: flex-start;
             justify-content: center;
@@ -359,9 +359,9 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             font-size: 2em;
             color: #4CAF50;
             font-weight: 600;
-            margin: 0 0 20px 0;
+            margin: 0;
+            padding: 25px 0;
             line-height: 1;
-            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -372,7 +372,7 @@ def generate_html_dashboard(data: List[NetworkIndexerData], output_path: str = "
             color: #9CA3AF;
             margin: 0;
             padding-bottom: 5px;
-            min-height: 1.5em;
+            height: 30px;
             display: flex;
             align-items: flex-end;
             justify-content: center;

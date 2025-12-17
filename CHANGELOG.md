@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Rewards distribution cards** (second row): Three new cards showing network-wide rewards metrics
+  - Total Rewards Distributed - all indexing rewards on Arbitrum Network
+  - GRT Kept by Indexers (red #FF6B6B) - indexer portion of rewards
+  - GRT Given to Delegators (cyan #4ECDC4) - delegator portion of rewards
+  - Data fetched from Arbitrum Network subgraph (DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp)
+- `fetch_rewards_metrics()` function to query graphNetwork for rewards data
+  - Queries totalIndexingRewards, totalIndexingIndexerRewards, totalIndexingDelegatorRewards
+  - Converts values from wei to GRT (divides by 10^18)
+- **Delegation table filtering**: Now shows only transactions ≥10,000 GRT
+  - Removed 50-event limit, shows all qualifying transactions from 1,000 fetched
+  - Updated tooltip text to reflect filter: "(table shows ≥10,000 GRT)"
+- **Link styling** in delegation table
+  - White links (#F8F6FF) with no underline by default
+  - Underline appears on hover for better UX
 - **Tooltips on delegation cards**: All three delegation cards now display tooltip on hover
   - Tooltip text: "Calculated for the last 1,000 transactions"
   - Appears on Total Delegated, Total Undelegated, and Net cards
@@ -59,8 +73,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensured green numbers align at exactly the same vertical position
 
 ### Technical
+- Added rewards metrics fetching from Arbitrum Network subgraph
+- Query uses graphNetwork(id: "1") to get total rewards, indexer rewards, delegator rewards
+- Wei to GRT conversion (division by 10^18) for all reward values
+- Second stats-container added for rewards cards layout
+- Delegation table filter logic: `if event["tokens"] < 10000: continue`
 - Added tooltip CSS styling with hover effects and arrow pointer
-- Tooltip positioned absolute with bottom: 125% (appears above cards)
+- Tooltip positioned absolute with bottom: 105% (appears above cards)
 - Enhanced `fetch_delegation_metrics()` to fetch full event details (delegator, indexer, timestamp, tx_hash)
 - Added `#delegationTable` with responsive styling
 - Updated `toggleNetExpand()` JavaScript function to control delegation table visibility

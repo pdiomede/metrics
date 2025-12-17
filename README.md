@@ -4,11 +4,16 @@ A Python-generated static HTML dashboard displaying key metrics for The Graph Pr
 
 ## Features
 
-- 💰 **Delegation Metrics**: Three cards showing Total Delegated, Total Undelegated, and Net (in GRT)
+- 💰 **Delegation Metrics** (First Row): Three cards showing Total Delegated, Total Undelegated, and Net (in GRT)
   - Real-time data from delegation events on The Graph Network
   - Color-coded: green for delegations, red for undelegations, dynamic for net
-  - Tooltips on hover showing "Calculated for the last 1,000 transactions"
+  - Tooltips on hover showing "Calculated for the last 1,000 transactions (table shows ≥10,000 GRT)"
   - Interactive arrow button on Net card to expand/collapse delegation events table
+- 🎁 **Rewards Distribution** (Second Row): Three cards showing rewards metrics from Arbitrum Network
+  - Total Rewards Distributed across The Graph Network
+  - GRT Kept by Indexers (red) - portion retained by indexers
+  - GRT Given to Delegators (cyan) - portion distributed to delegators
+  - Real-time data from Arbitrum Network subgraph
 - 📊 **Dual Subgraph Cards**: Two compact cards showing Total Subgraphs (All Networks) and Top 20 Chains
 - 📈 **Percentage Analysis**: Shows what percentage of total subgraphs the top 20 chains represent
 - 🔽 **Collapsible Table**: Interactive arrow button to show/hide the detailed network table
@@ -69,13 +74,18 @@ This will generate an `index.html` file in the same directory. Open it in your w
 ### Delegation Events Table (Collapsible)
 Accessible by clicking the arrow on the Net card:
 - **Event**: Type of transaction (✅ Delegation or ❌ Undelegation)
-- **GRT**: Amount of GRT tokens in the transaction
+- **GRT**: Amount of GRT tokens in the transaction (only shows ≥10,000 GRT)
 - **Date**: Transaction timestamp in UTC (YYYY-MM-DD HH:MM format)
 - **Indexer**: Indexer address (linked to Graph Explorer, shortened display)
 - **Delegator**: Delegator address (linked to Graph Explorer, shortened display)
 - **Tx**: Link to view transaction on Arbiscan
-- **Displays**: 50 most recent events from the 1,000 fetched
+- **Filter**: Only displays transactions of 10,000 GRT or more
 - **Default**: Hidden (click arrow to reveal)
+
+### Rewards Distribution (Second Row)
+- **Card 1**: Total Rewards Distributed - Complete sum of all indexing rewards on Arbitrum
+- **Card 2**: GRT Kept by Indexers - Portion of rewards retained by indexers (red)
+- **Card 3**: GRT Given to Delegators - Portion of rewards distributed to delegators (cyan)
 
 ### Subgraph Metrics (Second Row)
 - **Card 1**: Total Subgraphs (All Networks) - Shows complete count across all 150+ networks

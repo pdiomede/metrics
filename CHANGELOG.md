@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Dual Repository Support**: Added graphprotocol/metrics repository as additional remote
+  - Repository now syncs to both https://github.com/pdiomede/metrics and https://github.com/graphprotocol/metrics
+  - Updated README.md to include links to both repositories
+
 ## [0.0.2] - 2025-12-17
 
 ### Added

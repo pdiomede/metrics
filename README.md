@@ -180,7 +180,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Links
 
-- [GitHub Repository](https://github.com/pdiomede/metrics)
+- [GitHub Repository (pdiomede)](https://github.com/pdiomede/metrics)
+- [GitHub Repository (graphprotocol)](https://github.com/graphprotocol/metrics)
 - [The Graph Protocol](https://thegraph.com)
 - [The Graph Explorer](https://thegraph.com/explorer)
 
